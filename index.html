@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESBRAVANDO JOSÉ DE FREITAS - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div id="cacto" class="cacto">
+        <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+           
+            <ellipse cx="100" cy="150" rx="35" ry="80" fill="#2ecc71" stroke="#27ae60" stroke-width="2"/>
+            
+            
+            <ellipse cx="65" cy="130" rx="20" ry="45" fill="#2ecc71" stroke="#27ae60" stroke-width="2" transform="rotate(-30 65 130)"/>
+            <ellipse cx="135" cy="130" rx="20" ry="45" fill="#2ecc71" stroke="#27ae60" stroke-width="2" transform="rotate(30 135 130)"/>
+            
+            
+            <circle cx="100" cy="100" r="2" fill="#f39c12"/>
+            <circle cx="90" cy="110" r="2" fill="#f39c12"/>
+            <circle cx="110" cy="110" r="2" fill="#f39c12"/>
+            <circle cx="85" cy="130" r="2" fill="#f39c12"/>
+            <circle cx="115" cy="130" r="2" fill="#f39c12"/>
+            <circle cx="95" cy="150" r="2" fill="#f39c12"/>
+            <circle cx="105" cy="150" r="2" fill="#f39c12"/>
+            <circle cx="80" cy="170" r="2" fill="#f39c12"/>
+            <circle cx="120" cy="170" r="2" fill="#f39c12"/>
+            
+            
+            <circle cx="90" cy="140" r="4" fill="#000" id="olhoEsquerdo"/>
+            
+            <circle cx="110" cy="140" r="4" fill="#000" id="olhoDireito"/>
+            
+            <path d="M 95 155 Q 100 160 105 155" stroke="#000" stroke-width="2" fill="none" id="boca"/>
+            
+            
+            <g id="floresGrupo" opacity="0">
+                <circle cx="85" cy="80" r="8" fill="#e74c3c"/>
+                <circle cx="85" cy="70" r="3" fill="#f39c12"/>
+                <circle cx="115" cy="80" r="8" fill="#e74c3c"/>
+                <circle cx="115" cy="70" r="3" fill="#f39c12"/>
+            </g>
+        </svg>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="logo">🗺️ DESBRAVANDO JOSÉ DE FREITAS</h1>
+                <p class="subtitle">Guia de Viagens - Piauí</p>
+            </div>
+
+           
+            <form id="loginForm" class="form-login">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+
+            
+            <div class="form-links">
+                <a href="#" id="linkCriarConta" class="link-action">Criar conta</a>
+                <span class="separator">|</span>
+                <a href="#" id="linkRecuperarSenha" class="link-action">Recuperar senha</a>
+            </div>
+
+            
+            <div id="mensagem" class="mensagem"></div>
+        </div>
+
+        
+        <div class="background-decoration">
+            <div class="decoration-element"></div>
+            <div class="decoration-element"></div>
+            <div class="decoration-element"></div>
+        </div>
+    </div>
+
+    
+    <div id="modalCadastro" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeCadastro">&times;</span>
+            <h2>Criar Nova Conta</h2>
+            
+            <form id="cadastroForm" class="form-login">
+                <div class="form-group">
+                    <label for="cadNome">Nome Completo:</label>
+                    <input type="text" id="cadNome" placeholder="Seu nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cadEmail">Email:</label>
+                    <input type="email" id="cadEmail" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cadSenha">Senha:</label>
+                    <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cadConfirma">Confirmar Senha:</label>
+                    <input type="password" id="cadConfirma" placeholder="Repita a senha" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="modalRecuperar" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeRecuperar">&times;</span>
+            <h2>Recuperar Senha</h2>
+            
+            <form id="recuperarForm" class="form-login">
+                <div class="form-group">
+                    <label for="recEmail">Digite seu email:</label>
+                    <input type="email" id="recEmail" placeholder="seu@email.com" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enviar Link de Recuperação</button>
+                <p class="info-text">Você receberá um link de recuperação de senha em seu email.</p>
+            </form>
+        </div>
+    </div>
+
+    <script src="java.js"></script>
+</body>
+</html>
