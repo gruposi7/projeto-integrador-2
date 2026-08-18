@@ -74,6 +74,8 @@
                 <a href="#" id="linkRecuperarSenha" class="link-action">Recuperar senha</a>
             </div>
 
+            <button type="button" id="btnAdmin" class="btn btn-admin">Entrar como admin</button>
+
             
             <div id="mensagem" class="mensagem"></div>
         </div>
@@ -135,6 +137,89 @@
             </form>
         </div>
     </div>
+
+    <div id="modalAdmin" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAdmin">&times;</span>
+            <h2>Acesso do Administrador</h2>
+
+            <form id="adminForm" class="form-login">
+                <div class="form-group">
+                    <label for="adminEmail">Email:</label>
+                    <input type="email" id="adminEmail" placeholder="Email do administrador" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminSenha">Senha:</label>
+                    <input type="password" id="adminSenha" placeholder="Senha do administrador" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Acessar painel</button>
+                <p class="info-text">Área exclusiva para o administrador.</p>
+            </form>
+        </div>
+    </div>
+
+    <section id="painelAdmin" class="admin-panel" hidden>
+        <div class="admin-header">
+            <div>
+                <p class="admin-eyebrow">Área restrita</p>
+                <h2>Painel do administrador</h2>
+                <p>Gerencie os pontos turísticos de José de Freitas.</p>
+            </div>
+            <button type="button" id="btnSairAdmin" class="btn btn-logout">Sair</button>
+        </div>
+
+        <div class="admin-content">
+            <form id="pontoForm" class="point-form">
+                <h3 id="tituloFormularioPonto">Adicionar ponto turístico</h3>
+                <input type="hidden" id="pontoId">
+                <div class="form-group">
+                    <label for="pontoNome">Nome do ponto:</label>
+                    <input type="text" id="pontoNome" required>
+                </div>
+                <div class="form-group">
+                    <label for="pontoFoto">Foto do ponto (URL):</label>
+                    <input type="url" id="pontoFoto" placeholder="https://exemplo.com/foto.jpg" required>
+                    <img id="pontoFotoPreview" class="photo-preview" alt="Prévia da foto do ponto" hidden>
+                </div>
+                <div class="form-group">
+                    <label for="pontoDescricao">Descrição:</label>
+                    <textarea id="pontoDescricao" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="pontoLocalizacao">Localização:</label>
+                    <input type="text" id="pontoLocalizacao" required>
+                </div>
+                <div class="admin-form-actions">
+                    <button type="submit" class="btn btn-primary">Salvar ponto</button>
+                    <button type="button" id="btnCancelarEdicao" class="btn btn-secondary" hidden>Cancelar</button>
+                </div>
+            </form>
+
+            <div class="points-section">
+                <h3>Pontos cadastrados</h3>
+                <div id="listaPontos" class="points-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="telaUsuario" class="user-panel" hidden>
+        <header class="user-header">
+            <div>
+                <p class="admin-eyebrow">Guia de viagens</p>
+                <h2>Descubra José de Freitas</h2>
+                <p id="saudacaoUsuario">Confira os pontos turísticos cadastrados.</p>
+            </div>
+            <button type="button" id="btnSairUsuario" class="btn btn-logout">Sair</button>
+        </header>
+
+        <div class="user-toolbar">
+            <h3>Pontos turísticos</h3>
+            <span id="contadorPontos" class="points-count"></span>
+        </div>
+        <div id="listaPontosUsuario" class="user-points-list"></div>
+    </section>
 
     <script src="java.js"></script>
 </body>

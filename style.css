@@ -5,6 +5,28 @@
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
+body.modo-admin {
+    align-items: flex-start;
+    overflow-y: auto;
+}
+
+body.modo-admin .background-decoration {
+    display: none;
+}
+
+body.modo-usuario {
+    align-items: flex-start;
+    overflow-y: auto;
+}
+
+body.modo-usuario .background-decoration {
+    display: none;
+}
+
 :root {
     --primary-color: #2c3e50;
     --secondary-color: #3498db;
@@ -315,6 +337,19 @@ body {
     color: var(--text-light);
 }
 
+.btn-admin {
+    margin-top: 1rem;
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    width: 100%;
+}
+
+.btn-admin:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
 
 .mensagem {
     margin-top: 1rem;
@@ -473,8 +508,320 @@ body {
     font-style: italic;
 }
 
+.admin-panel {
+    width: min(1100px, calc(100% - 40px));
+    min-height: 100vh;
+    padding: 3rem 0;
+    color: var(--text-color);
+}
+
+.admin-header,
+.admin-content {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-header h2 {
+    color: var(--primary-color);
+    margin: 0.25rem 0;
+}
+
+.admin-header p {
+    color: var(--text-light);
+}
+
+.admin-eyebrow {
+    color: var(--secondary-color) !important;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-content {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.8fr) minmax(300px, 1.2fr);
+    gap: 2rem;
+    padding: 2rem 2.5rem;
+}
+
+.point-form h3,
+.points-section h3 {
+    margin-bottom: 1.25rem;
+    color: var(--primary-color);
+}
+
+.point-form textarea {
+    resize: vertical;
+    font: inherit;
+    padding: 12px 15px;
+    border: 2px solid var(--light-bg);
+    border-radius: 8px;
+}
+
+.point-form textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.photo-preview {
+    display: block;
+    width: 100%;
+    max-height: 160px;
+    margin-top: 0.75rem;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--light-bg);
+}
+
+.admin-form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.btn-secondary,
+.btn-logout {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-logout {
+    width: auto;
+    white-space: nowrap;
+}
+
+.points-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.point-item {
+    border: 1px solid var(--light-bg);
+    border-left: 4px solid var(--secondary-color);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.point-item h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.35rem;
+}
+
+.point-item p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.point-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.point-actions button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.empty-points {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.user-panel {
+    width: min(1120px, calc(100% - 40px));
+    min-height: 100vh;
+    padding: 3rem 0;
+    color: var(--text-color);
+}
+
+.user-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    color: var(--white);
+    background: linear-gradient(125deg, #1f6f78, #2c3e50);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+}
+
+.user-header h2 {
+    margin: 0.25rem 0;
+    font-size: 2rem;
+}
+
+.user-header p:not(.admin-eyebrow) {
+    opacity: 0.82;
+}
+
+.user-header .admin-eyebrow {
+    color: #f6c85f !important;
+}
+
+.user-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.user-toolbar h3 {
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.points-count {
+    color: var(--white);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.user-points-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.user-point-card {
+    overflow: hidden;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.point-photo {
+    display: block;
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    background: var(--light-bg);
+}
+
+.photo-unavailable {
+    object-fit: contain;
+    padding: 1rem;
+}
+
+.point-card-body {
+    padding: 1.25rem;
+}
+
+.point-card-body h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.point-location {
+    display: inline-block;
+    color: var(--secondary-color);
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+}
+
+.point-location:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.point-description {
+    min-height: 4.5rem;
+    color: var(--text-light);
+    font-size: 0.92rem;
+}
+
+.rating-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--light-bg);
+}
+
+.stars {
+    display: flex;
+}
+
+.star-button {
+    padding: 0 2px;
+    border: 0;
+    color: #cbd3d6;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.55rem;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.star-button:hover,
+.star-button.active {
+    color: #f6b73c;
+}
+
+.star-button:hover {
+    transform: translateY(-2px);
+}
+
+.rating-summary {
+    color: var(--text-light);
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
 
 @media (max-width: 768px) {
+    .user-panel {
+        width: calc(100% - 20px);
+        padding: 1.5rem 0;
+    }
+
+    .user-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+
+    .user-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .admin-panel {
+        width: calc(100% - 20px);
+        padding: 1.5rem 0;
+    }
+
+    .admin-header,
+    .admin-content {
+        padding: 1.5rem;
+    }
+
+    .admin-header,
+    .admin-content {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
     .login-card {
         padding: 2rem;
         margin: 20px;
