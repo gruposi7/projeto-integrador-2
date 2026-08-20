@@ -53,6 +53,7 @@ body {
 }
 
 
+<<<<<<< HEAD
 .cacto {
     position: fixed;
     width: 400px;
@@ -164,6 +165,8 @@ body {
 }
 
 
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
 .login-container {
     display: flex;
     align-items: center;
@@ -577,10 +580,18 @@ body {
 .photo-preview {
     display: block;
     width: 100%;
+<<<<<<< HEAD
     max-height: 160px;
     margin-top: 0.75rem;
     border-radius: 8px;
     object-fit: cover;
+=======
+    height: 160px;
+    margin-top: 0.75rem;
+    border-radius: 8px;
+    object-fit: contain;
+    background: var(--light-bg);
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     border: 1px solid var(--light-bg);
 }
 
@@ -708,7 +719,11 @@ body {
     display: block;
     width: 100%;
     height: 210px;
+<<<<<<< HEAD
     object-fit: cover;
+=======
+    object-fit: contain;
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     background: var(--light-bg);
 }
 
@@ -859,11 +874,14 @@ body {
         height: 100px;
     }
 
+<<<<<<< HEAD
     .cacto {
         width: 200px;
         height: 300px;
         right: 2%;
     }
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
 }
 
 @media (max-width: 480px) {

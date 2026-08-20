@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 const cacto = document.getElementById('cacto');
 let estadoCacto = 'normal'; 
 
@@ -104,6 +105,8 @@ setInterval(() => {
 }, Math.random() * 4000 + 2000); 
 
 
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
 const loginForm = document.getElementById('loginForm');
 const cadastroForm = document.getElementById('cadastroForm');
 const recuperarForm = document.getElementById('recuperarForm');
@@ -135,6 +138,7 @@ const saudacaoUsuario = document.getElementById('saudacaoUsuario');
 const btnSairUsuario = document.getElementById('btnSairUsuario');
 
 const ADMIN_EMAIL = 'admin@desbravando.com';
+<<<<<<< HEAD
 const ADMIN_SENHA = 'Admin@123';
 
 
@@ -143,11 +147,50 @@ function salvarUsuario(email, senha, nome) {
     usuarios[email] = {
         nome: nome,
         senha: btoa(senha), 
+=======
+const ADMIN_SENHA_HASH = 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7';
+
+const USUARIOS_PADRAO = [
+    { nome: 'Renato', email: 'renato@email.com', senha: 'renato123' },
+    { nome: 'Guilherme', email: 'guilherme@email.com', senha: 'guilherme123' }
+];
+
+function normalizarEmail(email) {
+    return email.trim().toLowerCase();
+}
+
+async function hashSenha(senha) {
+    if (!window.crypto || !window.crypto.subtle) {
+        return senha;
+    }
+
+    const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(senha));
+    return Array.from(new Uint8Array(buffer))
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+function obterUsuarios() {
+    try {
+        const dados = JSON.parse(localStorage.getItem('usuarios'));
+        return dados && typeof dados === 'object' && !Array.isArray(dados) ? dados : {};
+    } catch (erro) {
+        return {};
+    }
+}
+
+async function salvarUsuario(email, senha, nome) {
+    const usuarios = obterUsuarios();
+    usuarios[normalizarEmail(email)] = {
+        nome: nome,
+        senha: await hashSenha(senha),
+>>>>>>> 6a652ae (Atualização inicial do projeto)
         dataCriacao: new Date().toLocaleString()
     };
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
 }
 
+<<<<<<< HEAD
 function verificarUsuario(email, senha) {
     const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
     if (usuarios[email]) {
@@ -164,6 +207,54 @@ function usuarioExiste(email) {
 function obterUsuario(email) {
     const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
     return usuarios[email];
+=======
+function localizarUsuario(usuarios, email) {
+    const emailNormalizado = normalizarEmail(email);
+    const chave = Object.keys(usuarios).find((chaveUsuario) => normalizarEmail(chaveUsuario) === emailNormalizado);
+    return chave ? usuarios[chave] : null;
+}
+
+async function verificarUsuario(email, senha) {
+    const usuarios = obterUsuarios();
+    const usuario = localizarUsuario(usuarios, email);
+    if (!usuario) {
+        return false;
+    }
+
+    const senhaHash = await hashSenha(senha);
+    return usuario.senha === senhaHash || usuario.senha === senha;
+}
+
+function usuarioExiste(email) {
+    const usuarios = obterUsuarios();
+    return localizarUsuario(usuarios, email) !== null;
+}
+
+function obterUsuario(email) {
+    const usuarios = obterUsuarios();
+    return localizarUsuario(usuarios, email);
+}
+
+async function criarUsuariosPadrao() {
+    const usuariosExistentes = obterUsuarios();
+    let houveAlteracao = false;
+
+    for (const usuarioPadrao of USUARIOS_PADRAO) {
+        const emailPadrao = normalizarEmail(usuarioPadrao.email);
+        if (!usuariosExistentes[emailPadrao]) {
+            usuariosExistentes[emailPadrao] = {
+                nome: usuarioPadrao.nome,
+                senha: await hashSenha(usuarioPadrao.senha),
+                dataCriacao: new Date().toLocaleString()
+            };
+            houveAlteracao = true;
+        }
+    }
+
+    if (houveAlteracao) {
+        localStorage.setItem('usuarios', JSON.stringify(usuariosExistentes));
+    }
+>>>>>>> 6a652ae (Atualização inicial do projeto)
 }
 
 
@@ -186,27 +277,46 @@ function fecharModal(modal) {
 }
 
 
+<<<<<<< HEAD
 loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const email = document.getElementById('email').value.trim();
+=======
+loginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = normalizarEmail(document.getElementById('email').value);
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     const senha = document.getElementById('senha').value;
     
     if (!email || !senha) {
         mostrarMensagem('Por favor, preencha todos os campos', 'erro');
+<<<<<<< HEAD
         cactoTriste();
         return;
     }
     
     if (verificarUsuario(email, senha)) {
+=======
+        return;
+    }
+    
+    if (await verificarUsuario(email, senha)) {
+>>>>>>> 6a652ae (Atualização inicial do projeto)
         const usuario = obterUsuario(email);
         localStorage.setItem('usuarioLogado', email);
         localStorage.setItem('tipoUsuario', 'usuario');
         abrirTelaUsuario(usuario);
+<<<<<<< HEAD
         cactoFeliz();
     } else {
         mostrarMensagem('Email ou senha incorretos', 'erro');
         cactoTriste();
+=======
+    } else {
+        mostrarMensagem('Email ou senha incorretos', 'erro');
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     }
     
     loginForm.reset();
@@ -215,6 +325,7 @@ loginForm.addEventListener('submit', function(e) {
 
 linkCriarConta.addEventListener('click', function(e) {
     e.preventDefault();
+<<<<<<< HEAD
     cactoFeliz();
     abrirModal(modalCadastro);
 });
@@ -224,6 +335,16 @@ cadastroForm.addEventListener('submit', function(e) {
     
     const nome = document.getElementById('cadNome').value.trim();
     const email = document.getElementById('cadEmail').value.trim();
+=======
+    abrirModal(modalCadastro);
+});
+
+cadastroForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const nome = document.getElementById('cadNome').value.trim();
+    const email = normalizarEmail(document.getElementById('cadEmail').value);
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     const senha = document.getElementById('cadSenha').value;
     const confirma = document.getElementById('cadConfirma').value;
     
@@ -258,10 +379,15 @@ cadastroForm.addEventListener('submit', function(e) {
         return;
     }
     
+<<<<<<< HEAD
   
     salvarUsuario(email, senha, nome);
     mostrarMensagem('Conta criada com sucesso! Faça login', 'sucesso');
     cactoFeliz();
+=======
+    await salvarUsuario(email, senha, nome);
+    mostrarMensagem('Conta criada com sucesso! Faça login', 'sucesso');
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     
     cadastroForm.reset();
     setTimeout(() => {
@@ -277,14 +403,21 @@ closeCadastro.addEventListener('click', function() {
 
 linkRecuperarSenha.addEventListener('click', function(e) {
     e.preventDefault();
+<<<<<<< HEAD
     cactoFeliz();
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     abrirModal(modalRecuperar);
 });
 
 recuperarForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
+<<<<<<< HEAD
     const email = document.getElementById('recEmail').value.trim();
+=======
+    const email = normalizarEmail(document.getElementById('recEmail').value);
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     
     if (!email) {
         mostrarMensagem('Por favor, digite um email', 'erro');
@@ -298,7 +431,10 @@ recuperarForm.addEventListener('submit', function(e) {
     
     
     mostrarMensagem(`Link de recuperação enviado para ${email}`, 'sucesso');
+<<<<<<< HEAD
     cactoFeliz();
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     console.log(`[SIMULADO] Email de recuperação enviado para: ${email}`);
     
     recuperarForm.reset();
@@ -313,19 +449,33 @@ closeRecuperar.addEventListener('click', function() {
 });
 
 btnAdmin.addEventListener('click', function() {
+<<<<<<< HEAD
     cactoFeliz();
     abrirModal(modalAdmin);
 });
 
 adminForm.addEventListener('submit', function(e) {
+=======
+    abrirModal(modalAdmin);
+});
+
+adminForm.addEventListener('submit', async function(e) {
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     e.preventDefault();
 
     const email = document.getElementById('adminEmail').value.trim();
     const senha = document.getElementById('adminSenha').value;
+<<<<<<< HEAD
 
     if (email !== ADMIN_EMAIL || senha !== ADMIN_SENHA) {
         mostrarMensagem('Email ou senha de administrador incorretos', 'erro');
         cactoTriste();
+=======
+    const senhaHash = await hashSenha(senha);
+
+    if (email !== ADMIN_EMAIL || senhaHash !== ADMIN_SENHA_HASH) {
+        mostrarMensagem('Email ou senha de administrador incorretos', 'erro');
+>>>>>>> 6a652ae (Atualização inicial do projeto)
         return;
     }
 
@@ -333,12 +483,18 @@ adminForm.addEventListener('submit', function(e) {
     localStorage.setItem('tipoUsuario', 'admin');
     fecharModal(modalAdmin);
     document.querySelector('.login-container').hidden = true;
+<<<<<<< HEAD
     cacto.hidden = true;
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.add('modo-admin');
     painelAdmin.hidden = false;
     adminForm.reset();
     renderizarPontos();
+<<<<<<< HEAD
     cactoFeliz();
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
 });
 
 function obterPontos() {
@@ -471,13 +627,19 @@ btnSairAdmin.addEventListener('click', function() {
     localStorage.removeItem('tipoUsuario');
     painelAdmin.hidden = true;
     document.querySelector('.login-container').hidden = false;
+<<<<<<< HEAD
     cacto.hidden = false;
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.remove('modo-admin');
 });
 
 function abrirTelaUsuario(usuario) {
     document.querySelector('.login-container').hidden = true;
+<<<<<<< HEAD
     cacto.hidden = true;
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.add('modo-usuario');
     telaUsuario.hidden = false;
     saudacaoUsuario.textContent = `Bem-vindo, ${usuario.nome}! Confira os pontos turísticos cadastrados.`;
@@ -558,7 +720,10 @@ btnSairUsuario.addEventListener('click', function() {
     localStorage.removeItem('tipoUsuario');
     telaUsuario.hidden = true;
     document.querySelector('.login-container').hidden = false;
+<<<<<<< HEAD
     cacto.hidden = false;
+=======
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.remove('modo-usuario');
 });
 
@@ -574,10 +739,20 @@ window.addEventListener('click', function(e) {
     }
 });
 
+<<<<<<< HEAD
 window.addEventListener('load', function() {
     const usuarios = localStorage.getItem('usuarios');
     if (!usuarios) {
         salvarUsuario('demo@email.com', '123456', 'Usuário Demo');
         console.log('Usuário de demo criado: demo@email.com / 123456');
+=======
+window.addEventListener('load', async function() {
+    const usuarios = localStorage.getItem('usuarios');
+    if (!usuarios) {
+        await criarUsuariosPadrao();
+        console.log('Usuários padrão criados: Renato e Guilherme');
+    } else {
+        await criarUsuariosPadrao();
+>>>>>>> 6a652ae (Atualização inicial do projeto)
     }
 });
