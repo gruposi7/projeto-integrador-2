@@ -58,6 +58,29 @@ app.post('/api/login', async (req, res) => {
     const emailNormalizado = normalizarEmail(email);
     const senhaHash = hashSenha(senha);
 
+    const { data: admin, error: erroAdmin } = await supabase
+      .from('administradores')
+      .select('*')
+      .eq('email', emailNormalizado)
+      .maybeSingle();
+
+    if (erroAdmin) {
+      console.error('Erro ao consultar administradores:', erroAdmin);
+      return res.status(503).json({ success: false, message: 'Banco de dados indisponível. Verifique o schema exposto no Supabase.' });
+    }
+
+    if (admin && admin.senha === senhaHash) {
+      return res.json({
+        success: true,
+        tipo: 'admin',
+        usuario: {
+          id: admin.idadmin,
+          nome: admin.nome,
+          email: admin.email,
+        },
+      });
+    }
+
     const { data: usuario, error: erroUsuario } = await supabase
       .from('usuarios')
       .select('*')
@@ -77,24 +100,6 @@ app.post('/api/login', async (req, res) => {
           id: usuario.idusuarios,
           nome: usuario.nome,
           email: usuario.email,
-        },
-      });
-    }
-
-    const { data: admin, error: erroAdmin } = await supabase
-      .from('administradores')
-      .select('*')
-      .eq('email', emailNormalizado)
-      .maybeSingle();
-
-    if (!erroAdmin && admin && admin.senha === senhaHash) {
-      return res.json({
-        success: true,
-        tipo: 'admin',
-        usuario: {
-          id: admin.idadmin,
-          nome: admin.nome,
-          email: admin.email,
         },
       });
     }

@@ -128,7 +128,9 @@ GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA mydb TO anon, authenticat
 -- Usuários padrão do sistema
 -- -----------------------------------------------------
 INSERT INTO administradores (nome, email, senha) VALUES
-  ('Administrador', 'admin@desbravando.com', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7');
+  ('Administrador', 'admin@desbravando.com', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7'),
+  ('Renato', 'renato@email.com', 'fc3e25216432122f651655977976fccea1a96a3d1332afe9e98a6695979ea537'),
+  ('Guilherme', 'guilherme@email.com', 'c735490be0e36270260474775bc0cf7ae5c82023ed215f1079b1d8d4229a638f');
 
 INSERT INTO usuarios (nome, email, senha) VALUES
   ('Renato', 'renato@email.com', 'fc3e25216432122f651655977976fccea1a96a3d1332afe9e98a6695979ea537'),
