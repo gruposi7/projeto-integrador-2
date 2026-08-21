@@ -1,6 +1,9 @@
 {
   "version": 2,
   "functions": {
+    "server.js": {
+      "includeFiles": "{index.html,style.css,java.js}"
+    },
     "api/[...path].js": {
       "includeFiles": "{index.html,style.css,java.js}"
     }
