@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "functions": {
+    "api/[...path].js": {
+      "includeFiles": [
+        "index.html",
+        "style.css",
+        "java.js"
+      ]
+    }
+  }
+}
