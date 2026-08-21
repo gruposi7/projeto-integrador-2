@@ -52,121 +52,6 @@ body {
     overflow-x: hidden;
 }
 
-
-<<<<<<< HEAD
-.cacto {
-    position: fixed;
-    width: 400px;
-    height: 500px;
-    pointer-events: none;
-    z-index: 5;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-    right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
-    transform-origin: center center;
-}
-
-.cacto svg {
-    width: 100%;
-    height: 100%;
-}
-
-@keyframes pulo {
-    0%, 100% {
-        transform: translateY(-50%) scale(1);
-    }
-    50% {
-        transform: translateY(-80px) scale(1.05);
-    }
-}
-
-@keyframes triste {
-    0% {
-        transform: translateY(-50%) rotate(0deg) scale(1);
-    }
-    25% {
-        transform: translateY(-50%) rotate(-5deg) scale(0.95);
-    }
-    75% {
-        transform: translateY(-50%) rotate(5deg) scale(0.95);
-    }
-    100% {
-        transform: translateY(-50%) rotate(0deg) scale(1);
-    }
-}
-
-@keyframes danca {
-    0% {
-        transform: translateY(-50%) rotate(0deg) scale(1);
-    }
-    25% {
-        transform: translateY(-50%) rotate(-10deg) scale(1.05);
-    }
-    50% {
-        transform: translateY(-50%) rotate(0deg) scale(1);
-    }
-    75% {
-        transform: translateY(-50%) rotate(10deg) scale(1.05);
-    }
-    100% {
-        transform: translateY(-50%) rotate(0deg) scale(1);
-    }
-}
-
-.cacto.pulo {
-    animation: pulo 0.6s ease-in-out;
-}
-
-.cacto.triste {
-    animation: triste 0.5s ease-in-out;
-}
-
-.cacto.feliz {
-    animation: danca 0.8s ease-in-out;
-}
-
-
-.cacto.estado-triste #olhoEsquerdo,
-.cacto.estado-triste #olhoDireito {
-    fill: #e74c3c;
-}
-
-.cacto.estado-feliz #olhoEsquerdo,
-.cacto.estado-feliz #olhoDireito {
-    fill: #2ecc71;
-}
-
-.cacto.estado-feliz #boca {
-    stroke: #27ae60;
-    stroke-width: 3;
-    d: path('M 95 155 Q 100 162 105 155');
-}
-
-.cacto.estado-triste #boca {
-    stroke: #e74c3c;
-    stroke-width: 2;
-    d: path('M 95 155 Q 100 150 105 155');
-}
-
-.cacto.estado-feliz #floresGrupo {
-    animation: aparecer 0.5s ease forwards;
-}
-
-@keyframes aparecer {
-    from {
-        opacity: 0;
-        transform: scale(0);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
 .login-container {
     display: flex;
     align-items: center;
@@ -580,18 +465,11 @@ body {
 .photo-preview {
     display: block;
     width: 100%;
-<<<<<<< HEAD
-    max-height: 160px;
-    margin-top: 0.75rem;
-    border-radius: 8px;
-    object-fit: cover;
-=======
     height: 160px;
     margin-top: 0.75rem;
     border-radius: 8px;
     object-fit: contain;
     background: var(--light-bg);
->>>>>>> 6a652ae (Atualização inicial do projeto)
     border: 1px solid var(--light-bg);
 }
 
@@ -719,11 +597,7 @@ body {
     display: block;
     width: 100%;
     height: 210px;
-<<<<<<< HEAD
-    object-fit: cover;
-=======
     object-fit: contain;
->>>>>>> 6a652ae (Atualização inicial do projeto)
     background: var(--light-bg);
 }
 
@@ -874,14 +748,6 @@ body {
         height: 100px;
     }
 
-<<<<<<< HEAD
-    .cacto {
-        width: 200px;
-        height: 300px;
-        right: 2%;
-    }
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
 }
 
 @media (max-width: 480px) {

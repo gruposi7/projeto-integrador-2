@@ -1,112 +1,4 @@
 
-<<<<<<< HEAD
-const cacto = document.getElementById('cacto');
-let estadoCacto = 'normal'; 
-
-
-document.addEventListener('mousemove', function(e) {
-    const cactoRect = cacto.getBoundingClientRect();
-    const cactoX = cactoRect.left + cactoRect.width / 2;
-    const cactoY = cactoRect.top + cactoRect.height / 2;
-    
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
-    
-    
-    const deltaX = mouseX - cactoX;
-    const deltaY = mouseY - cactoY;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
-    
-    const normX = distance > 0 ? deltaX / distance : 0;
-    const normY = distance > 0 ? deltaY / distance : 0;
-    
-  
-    const olhoEsquerdo = document.getElementById('olhoEsquerdo');
-    const olhoDireito = document.getElementById('olhoDireito');
-    
-    const offsetMovement = 3;
-    const newEyeOffsetX = normX * offsetMovement;
-    const newEyeOffsetY = normY * offsetMovement;
-    
-    olhoEsquerdo.setAttribute('cx', 90 + newEyeOffsetX);
-    olhoEsquerdo.setAttribute('cy', 140 + newEyeOffsetY);
-    
-    olhoDireito.setAttribute('cx', 110 + newEyeOffsetX);
-    olhoDireito.setAttribute('cy', 140 + newEyeOffsetY);
-});
-
-
-document.addEventListener('click', function(e) {
-    const elemento = e.target;
-    
-   
-    const botaoPrincipal = elemento.closest('.btn-primary');
-    
-  
-    const linkCorreto = elemento.closest('.link-action');
-    
-
-    if (botaoPrincipal) {
-        cactoFeliz();
-    }
-    
-    else if (linkCorreto) {
-        cactoFeliz();
-    }
-   
-    else if (!elemento.closest('.login-card') && !elemento.closest('.modal-content')) {
-        cactoTriste();
-    }
-});
-
-
-function cactoFeliz() {
-    estadoCacto = 'feliz';
-    cacto.classList.remove('triste', 'pulo', 'estado-triste');
-    cacto.classList.add('feliz', 'estado-feliz');
-    
-    
-    setTimeout(() => {
-        cacto.classList.remove('feliz', 'estado-feliz');
-        estadoCacto = 'normal';
-    }, 800);
-}
-
-function cactoTriste() {
-    estadoCacto = 'triste';
-    cacto.classList.remove('feliz', 'pulo', 'estado-feliz');
-    cacto.classList.add('triste', 'estado-triste');
-    
-   
-    setTimeout(() => {
-        cacto.classList.remove('triste', 'estado-triste');
-        estadoCacto = 'normal';
-    }, 500);
-}
-
-
-setInterval(() => {
-    if (estadoCacto === 'normal') {
-        const olhoEsquerdo = document.getElementById('olhoEsquerdo');
-        const olhoDireito = document.getElementById('olhoDireito');
-        
-        olhoEsquerdo.style.transition = 'r 0.1s ease';
-        olhoDireito.style.transition = 'r 0.1s ease';
-        
-        olhoEsquerdo.setAttribute('r', '0');
-        olhoDireito.setAttribute('r', '0');
-        
-        setTimeout(() => {
-            olhoEsquerdo.setAttribute('r', '4');
-            olhoDireito.setAttribute('r', '4');
-        }, 100);
-    }
-}, Math.random() * 4000 + 2000); 
-
-
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
 const loginForm = document.getElementById('loginForm');
 const cadastroForm = document.getElementById('cadastroForm');
 const recuperarForm = document.getElementById('recuperarForm');
@@ -136,18 +28,27 @@ const listaPontosUsuario = document.getElementById('listaPontosUsuario');
 const contadorPontos = document.getElementById('contadorPontos');
 const saudacaoUsuario = document.getElementById('saudacaoUsuario');
 const btnSairUsuario = document.getElementById('btnSairUsuario');
+const API_BASE = '/api';
+
+async function apiRequest(endpoint, options = {}) {
+    const resposta = await fetch(`${API_BASE}${endpoint}`, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options
+    });
+    const dados = resposta.status === 204 ? null : await resposta.json();
+    if (!resposta.ok) throw new Error(dados?.message || 'Não foi possível concluir a operação.');
+    return dados;
+}
+
+function normalizarPonto(ponto) {
+    return {
+        ...ponto,
+        id: String(ponto.idpontos_turisticos),
+        localizacao: ponto.endereco || ''
+    };
+}
 
 const ADMIN_EMAIL = 'admin@desbravando.com';
-<<<<<<< HEAD
-const ADMIN_SENHA = 'Admin@123';
-
-
-function salvarUsuario(email, senha, nome) {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
-    usuarios[email] = {
-        nome: nome,
-        senha: btoa(senha), 
-=======
 const ADMIN_SENHA_HASH = 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7';
 
 const USUARIOS_PADRAO = [
@@ -184,30 +85,11 @@ async function salvarUsuario(email, senha, nome) {
     usuarios[normalizarEmail(email)] = {
         nome: nome,
         senha: await hashSenha(senha),
->>>>>>> 6a652ae (Atualização inicial do projeto)
         dataCriacao: new Date().toLocaleString()
     };
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
 }
 
-<<<<<<< HEAD
-function verificarUsuario(email, senha) {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
-    if (usuarios[email]) {
-        return usuarios[email].senha === btoa(senha);
-    }
-    return false;
-}
-
-function usuarioExiste(email) {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
-    return usuarios.hasOwnProperty(email);
-}
-
-function obterUsuario(email) {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
-    return usuarios[email];
-=======
 function localizarUsuario(usuarios, email) {
     const emailNormalizado = normalizarEmail(email);
     const chave = Object.keys(usuarios).find((chaveUsuario) => normalizarEmail(chaveUsuario) === emailNormalizado);
@@ -254,7 +136,6 @@ async function criarUsuariosPadrao() {
     if (houveAlteracao) {
         localStorage.setItem('usuarios', JSON.stringify(usuariosExistentes));
     }
->>>>>>> 6a652ae (Atualização inicial do projeto)
 }
 
 
@@ -277,46 +158,36 @@ function fecharModal(modal) {
 }
 
 
-<<<<<<< HEAD
-loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value.trim();
-=======
 loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const email = normalizarEmail(document.getElementById('email').value);
->>>>>>> 6a652ae (Atualização inicial do projeto)
     const senha = document.getElementById('senha').value;
     
     if (!email || !senha) {
         mostrarMensagem('Por favor, preencha todos os campos', 'erro');
-<<<<<<< HEAD
-        cactoTriste();
         return;
     }
     
-    if (verificarUsuario(email, senha)) {
-=======
-        return;
-    }
-    
-    if (await verificarUsuario(email, senha)) {
->>>>>>> 6a652ae (Atualização inicial do projeto)
-        const usuario = obterUsuario(email);
+    try {
+        const resposta = await apiRequest('/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, senha })
+        });
         localStorage.setItem('usuarioLogado', email);
-        localStorage.setItem('tipoUsuario', 'usuario');
-        abrirTelaUsuario(usuario);
-<<<<<<< HEAD
-        cactoFeliz();
-    } else {
-        mostrarMensagem('Email ou senha incorretos', 'erro');
-        cactoTriste();
-=======
-    } else {
-        mostrarMensagem('Email ou senha incorretos', 'erro');
->>>>>>> 6a652ae (Atualização inicial do projeto)
+        localStorage.setItem('tipoUsuario', resposta.tipo);
+        localStorage.setItem('idUsuario', resposta.usuario.id);
+        if (resposta.tipo === 'admin') {
+            fecharModal(modalAdmin);
+            document.querySelector('.login-container').hidden = true;
+            document.body.classList.add('modo-admin');
+            painelAdmin.hidden = false;
+            await renderizarPontos();
+        } else {
+            await abrirTelaUsuario(resposta.usuario);
+        }
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
     }
     
     loginForm.reset();
@@ -325,17 +196,6 @@ loginForm.addEventListener('submit', async function(e) {
 
 linkCriarConta.addEventListener('click', function(e) {
     e.preventDefault();
-<<<<<<< HEAD
-    cactoFeliz();
-    abrirModal(modalCadastro);
-});
-
-cadastroForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const nome = document.getElementById('cadNome').value.trim();
-    const email = document.getElementById('cadEmail').value.trim();
-=======
     abrirModal(modalCadastro);
 });
 
@@ -344,7 +204,6 @@ cadastroForm.addEventListener('submit', async function(e) {
     
     const nome = document.getElementById('cadNome').value.trim();
     const email = normalizarEmail(document.getElementById('cadEmail').value);
->>>>>>> 6a652ae (Atualização inicial do projeto)
     const senha = document.getElementById('cadSenha').value;
     const confirma = document.getElementById('cadConfirma').value;
     
@@ -379,15 +238,16 @@ cadastroForm.addEventListener('submit', async function(e) {
         return;
     }
     
-<<<<<<< HEAD
-  
-    salvarUsuario(email, senha, nome);
-    mostrarMensagem('Conta criada com sucesso! Faça login', 'sucesso');
-    cactoFeliz();
-=======
-    await salvarUsuario(email, senha, nome);
-    mostrarMensagem('Conta criada com sucesso! Faça login', 'sucesso');
->>>>>>> 6a652ae (Atualização inicial do projeto)
+    try {
+        await apiRequest('/register', {
+            method: 'POST',
+            body: JSON.stringify({ nome, email, senha })
+        });
+        mostrarMensagem('Conta criada com sucesso! Faça login', 'sucesso');
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
+        return;
+    }
     
     cadastroForm.reset();
     setTimeout(() => {
@@ -403,39 +263,29 @@ closeCadastro.addEventListener('click', function() {
 
 linkRecuperarSenha.addEventListener('click', function(e) {
     e.preventDefault();
-<<<<<<< HEAD
-    cactoFeliz();
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
     abrirModal(modalRecuperar);
 });
 
-recuperarForm.addEventListener('submit', function(e) {
+recuperarForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-<<<<<<< HEAD
-    const email = document.getElementById('recEmail').value.trim();
-=======
     const email = normalizarEmail(document.getElementById('recEmail').value);
->>>>>>> 6a652ae (Atualização inicial do projeto)
     
     if (!email) {
         mostrarMensagem('Por favor, digite um email', 'erro');
         return;
     }
     
-    if (!usuarioExiste(email)) {
-        mostrarMensagem('Email não encontrado no sistema', 'erro');
+    try {
+        const resposta = await apiRequest('/forgot-password', {
+            method: 'POST',
+            body: JSON.stringify({ email })
+        });
+        mostrarMensagem(resposta.message, 'sucesso');
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
         return;
     }
-    
-    
-    mostrarMensagem(`Link de recuperação enviado para ${email}`, 'sucesso');
-<<<<<<< HEAD
-    cactoFeliz();
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
-    console.log(`[SIMULADO] Email de recuperação enviado para: ${email}`);
     
     recuperarForm.reset();
     setTimeout(() => {
@@ -449,64 +299,43 @@ closeRecuperar.addEventListener('click', function() {
 });
 
 btnAdmin.addEventListener('click', function() {
-<<<<<<< HEAD
-    cactoFeliz();
-    abrirModal(modalAdmin);
-});
-
-adminForm.addEventListener('submit', function(e) {
-=======
     abrirModal(modalAdmin);
 });
 
 adminForm.addEventListener('submit', async function(e) {
->>>>>>> 6a652ae (Atualização inicial do projeto)
     e.preventDefault();
 
     const email = document.getElementById('adminEmail').value.trim();
     const senha = document.getElementById('adminSenha').value;
-<<<<<<< HEAD
 
-    if (email !== ADMIN_EMAIL || senha !== ADMIN_SENHA) {
-        mostrarMensagem('Email ou senha de administrador incorretos', 'erro');
-        cactoTriste();
-=======
-    const senhaHash = await hashSenha(senha);
-
-    if (email !== ADMIN_EMAIL || senhaHash !== ADMIN_SENHA_HASH) {
-        mostrarMensagem('Email ou senha de administrador incorretos', 'erro');
->>>>>>> 6a652ae (Atualização inicial do projeto)
-        return;
+    try {
+        const resposta = await apiRequest('/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, senha })
+        });
+        if (resposta.tipo !== 'admin') throw new Error('Este usuário não é administrador.');
+        localStorage.setItem('usuarioLogado', email);
+        localStorage.setItem('tipoUsuario', 'admin');
+        localStorage.setItem('idUsuario', resposta.usuario.id);
+        fecharModal(modalAdmin);
+        document.querySelector('.login-container').hidden = true;
+        document.body.classList.add('modo-admin');
+        painelAdmin.hidden = false;
+        adminForm.reset();
+        await renderizarPontos();
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
     }
-
-    localStorage.setItem('usuarioLogado', ADMIN_EMAIL);
-    localStorage.setItem('tipoUsuario', 'admin');
-    fecharModal(modalAdmin);
-    document.querySelector('.login-container').hidden = true;
-<<<<<<< HEAD
-    cacto.hidden = true;
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
-    document.body.classList.add('modo-admin');
-    painelAdmin.hidden = false;
-    adminForm.reset();
-    renderizarPontos();
-<<<<<<< HEAD
-    cactoFeliz();
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
 });
 
-function obterPontos() {
-    return JSON.parse(localStorage.getItem('pontosTuristicos')) || [];
-}
-
-function salvarPontos(pontos) {
-    localStorage.setItem('pontosTuristicos', JSON.stringify(pontos));
-}
-
-function renderizarPontos() {
-    const pontos = obterPontos();
+async function renderizarPontos() {
+    let pontos;
+    try {
+        pontos = (await apiRequest('/pontos')).map(normalizarPonto);
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
+        return;
+    }
 
     if (pontos.length === 0) {
         listaPontos.innerHTML = '<p class="empty-points">Nenhum ponto turístico cadastrado.</p>';
@@ -538,7 +367,7 @@ function escaparHtml(texto) {
     return elemento.innerHTML;
 }
 
-pontoForm.addEventListener('submit', function(e) {
+pontoForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     if (localStorage.getItem('tipoUsuario') !== 'admin') {
@@ -548,34 +377,32 @@ pontoForm.addEventListener('submit', function(e) {
 
     const id = document.getElementById('pontoId').value;
     const ponto = {
-        id: id || Date.now().toString(),
         nome: document.getElementById('pontoNome').value.trim(),
         foto: pontoFoto.value.trim(),
         descricao: document.getElementById('pontoDescricao').value.trim(),
         localizacao: document.getElementById('pontoLocalizacao').value.trim()
     };
-    const pontos = obterPontos();
-    const indice = pontos.findIndex((item) => item.id === id);
-
-    if (indice >= 0) {
-        pontos[indice] = ponto;
-    } else {
-        pontos.push(ponto);
+    try {
+        await apiRequest(id ? `/pontos/${id}` : '/pontos', {
+            method: id ? 'PUT' : 'POST',
+            body: JSON.stringify(ponto)
+        });
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
+        return;
     }
-
-    salvarPontos(pontos);
     pontoForm.reset();
     document.getElementById('pontoId').value = '';
     tituloFormularioPonto.textContent = 'Adicionar ponto turístico';
     btnCancelarEdicao.hidden = true;
-    renderizarPontos();
+    await renderizarPontos();
 });
 
-listaPontos.addEventListener('click', function(e) {
+listaPontos.addEventListener('click', async function(e) {
     const pontoId = e.target.dataset.editarPonto || e.target.dataset.removerPonto;
     if (!pontoId || localStorage.getItem('tipoUsuario') !== 'admin') return;
 
-    const pontos = obterPontos();
+    const pontos = (await apiRequest('/pontos')).map(normalizarPonto);
     const ponto = pontos.find((item) => item.id === pontoId);
 
     if (e.target.dataset.editarPonto && ponto) {
@@ -591,8 +418,8 @@ listaPontos.addEventListener('click', function(e) {
     }
 
     if (e.target.dataset.removerPonto) {
-        salvarPontos(pontos.filter((item) => item.id !== pontoId));
-        renderizarPontos();
+        await apiRequest(`/pontos/${pontoId}`, { method: 'DELETE' });
+        await renderizarPontos();
     }
 });
 
@@ -627,27 +454,15 @@ btnSairAdmin.addEventListener('click', function() {
     localStorage.removeItem('tipoUsuario');
     painelAdmin.hidden = true;
     document.querySelector('.login-container').hidden = false;
-<<<<<<< HEAD
-    cacto.hidden = false;
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.remove('modo-admin');
 });
 
-function abrirTelaUsuario(usuario) {
+async function abrirTelaUsuario(usuario) {
     document.querySelector('.login-container').hidden = true;
-<<<<<<< HEAD
-    cacto.hidden = true;
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.add('modo-usuario');
     telaUsuario.hidden = false;
     saudacaoUsuario.textContent = `Bem-vindo, ${usuario.nome}! Confira os pontos turísticos cadastrados.`;
-    renderizarPontosUsuario();
-}
-
-function obterAvaliacoes() {
-    return JSON.parse(localStorage.getItem('avaliacoesPontos')) || {};
+    await renderizarPontosUsuario();
 }
 
 function renderizarEstrelas(pontoId, media) {
@@ -658,24 +473,30 @@ function renderizarEstrelas(pontoId, media) {
     }).join('');
 }
 
-function calcularMedia(pontoId) {
-    const avaliacoes = obterAvaliacoes()[pontoId] || [];
-    if (avaliacoes.length === 0) return 0;
-    return avaliacoes.reduce((total, nota) => total + nota, 0) / avaliacoes.length;
-}
+async function renderizarPontosUsuario() {
+    let pontos;
+    try {
+        pontos = (await apiRequest('/pontos')).map(normalizarPonto);
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
+        return;
+    }
+    const pontosComAvaliacoes = await Promise.all(pontos.map(async (ponto) => ({
+        ...ponto,
+        avaliacoes: await apiRequest(`/pontos/${ponto.id}/avaliacoes`)
+    })));
+    contadorPontos.textContent = `${pontosComAvaliacoes.length} ${pontosComAvaliacoes.length === 1 ? 'lugar encontrado' : 'lugares encontrados'}`;
 
-function renderizarPontosUsuario() {
-    const pontos = obterPontos();
-    contadorPontos.textContent = `${pontos.length} ${pontos.length === 1 ? 'lugar encontrado' : 'lugares encontrados'}`;
-
-    if (pontos.length === 0) {
+    if (pontosComAvaliacoes.length === 0) {
         listaPontosUsuario.innerHTML = '<p class="empty-points">Ainda não há pontos turísticos cadastrados.</p>';
         return;
     }
 
-    listaPontosUsuario.innerHTML = pontos.map((ponto) => {
-        const media = calcularMedia(ponto.id);
-        const quantidadeAvaliacoes = (obterAvaliacoes()[ponto.id] || []).length;
+    listaPontosUsuario.innerHTML = pontosComAvaliacoes.map((ponto) => {
+        const quantidadeAvaliacoes = ponto.avaliacoes.length;
+        const media = quantidadeAvaliacoes
+            ? ponto.avaliacoes.reduce((total, avaliacao) => total + avaliacao.nota, 0) / quantidadeAvaliacoes
+            : 0;
         const foto = ponto.foto;
         const linkLocalizacao = obterLinkLocalizacao(ponto.localizacao);
 
@@ -703,16 +524,23 @@ function renderizarPontosUsuario() {
     });
 }
 
-listaPontosUsuario.addEventListener('click', function(e) {
+listaPontosUsuario.addEventListener('click', async function(e) {
     const botao = e.target.closest('[data-avaliar-ponto]');
     if (!botao || localStorage.getItem('tipoUsuario') !== 'usuario') return;
 
-    const avaliacoes = obterAvaliacoes();
     const pontoId = botao.dataset.avaliarPonto;
-    if (!avaliacoes[pontoId]) avaliacoes[pontoId] = [];
-    avaliacoes[pontoId].push(Number(botao.dataset.nota));
-    localStorage.setItem('avaliacoesPontos', JSON.stringify(avaliacoes));
-    renderizarPontosUsuario();
+    try {
+        await apiRequest(`/pontos/${pontoId}/avaliacoes`, {
+            method: 'POST',
+            body: JSON.stringify({
+                usuarioId: localStorage.getItem('idUsuario'),
+                nota: Number(botao.dataset.nota)
+            })
+        });
+        await renderizarPontosUsuario();
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
+    }
 });
 
 btnSairUsuario.addEventListener('click', function() {
@@ -720,10 +548,6 @@ btnSairUsuario.addEventListener('click', function() {
     localStorage.removeItem('tipoUsuario');
     telaUsuario.hidden = true;
     document.querySelector('.login-container').hidden = false;
-<<<<<<< HEAD
-    cacto.hidden = false;
-=======
->>>>>>> 6a652ae (Atualização inicial do projeto)
     document.body.classList.remove('modo-usuario');
 });
 
@@ -739,13 +563,6 @@ window.addEventListener('click', function(e) {
     }
 });
 
-<<<<<<< HEAD
-window.addEventListener('load', function() {
-    const usuarios = localStorage.getItem('usuarios');
-    if (!usuarios) {
-        salvarUsuario('demo@email.com', '123456', 'Usuário Demo');
-        console.log('Usuário de demo criado: demo@email.com / 123456');
-=======
 window.addEventListener('load', async function() {
     const usuarios = localStorage.getItem('usuarios');
     if (!usuarios) {
@@ -753,6 +570,5 @@ window.addEventListener('load', async function() {
         console.log('Usuários padrão criados: Renato e Guilherme');
     } else {
         await criarUsuariosPadrao();
->>>>>>> 6a652ae (Atualização inicial do projeto)
     }
 });

@@ -9,15 +9,22 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SECRET_KEY
+  || process.env.SUPABASE_SERVICE_ROLE_KEY
+  || process.env.SUPABASE_PUBLISHABLE_KEY
+  || process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Variáveis de ambiente do Supabase não encontradas. Verifique .env');
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
+  db: {
+    schema: 'mydb',
+  },
   auth: {
     persistSession: false,
     autoRefreshToken: false,
@@ -53,7 +60,12 @@ app.post('/api/login', async (req, res) => {
       .eq('email', emailNormalizado)
       .maybeSingle();
 
-    if (!erroUsuario && usuario && usuario.senha === senhaHash) {
+    if (erroUsuario) {
+      console.error('Erro ao consultar usuarios:', erroUsuario);
+      return res.status(503).json({ success: false, message: 'Banco de dados indisponível. Verifique o schema exposto no Supabase.' });
+    }
+
+    if (usuario && usuario.senha === senhaHash) {
       return res.json({
         success: true,
         tipo: 'usuario',
@@ -104,11 +116,15 @@ app.post('/api/register', async (req, res) => {
 
     const emailNormalizado = normalizarEmail(email);
 
-    const { data: usuarioExistente } = await supabase
+    const { data: usuarioExistente, error: erroConsulta } = await supabase
       .from('usuarios')
       .select('idusuarios')
       .eq('email', emailNormalizado)
       .maybeSingle();
+
+    if (erroConsulta) {
+      throw erroConsulta;
+    }
 
     if (usuarioExistente) {
       return res.status(409).json({ success: false, message: 'Este email já está cadastrado.' });
@@ -126,10 +142,13 @@ app.post('/api/register', async (req, res) => {
       throw error;
     }
 
+    const usuarioCriado = data?.[0];
+    const { senha: senhaArmazenada, ...usuarioSeguro } = usuarioCriado || {};
+
     return res.status(201).json({
       success: true,
       message: 'Usuário criado com sucesso.',
-      usuario: data?.[0],
+      usuario: usuarioSeguro,
     });
   } catch (error) {
     console.error(error);
@@ -258,6 +277,111 @@ app.post('/api/reset-password', async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: 'Erro ao redefinir senha.' });
+  }
+});
+
+app.get('/api/pontos', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('pontos_turisticos')
+      .select('*')
+      .order('idpontos_turisticos', { ascending: true });
+
+    if (error) throw error;
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao buscar pontos turísticos.' });
+  }
+});
+
+app.post('/api/pontos', async (req, res) => {
+  try {
+    const { nome, foto, descricao, localizacao } = req.body;
+    if (!nome || !descricao || !localizacao) {
+      return res.status(400).json({ message: 'Nome, descrição e localização são obrigatórios.' });
+    }
+
+    const { data, error } = await supabase
+      .from('pontos_turisticos')
+      .insert({ nome, foto: foto || null, descricao, endereco: localizacao })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao cadastrar ponto turístico.' });
+  }
+});
+
+app.put('/api/pontos/:id', async (req, res) => {
+  try {
+    const { nome, foto, descricao, localizacao } = req.body;
+    const { data, error } = await supabase
+      .from('pontos_turisticos')
+      .update({ nome, foto: foto || null, descricao, endereco: localizacao })
+      .eq('idpontos_turisticos', req.params.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao atualizar ponto turístico.' });
+  }
+});
+
+app.delete('/api/pontos/:id', async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from('pontos_turisticos')
+      .delete()
+      .eq('idpontos_turisticos', req.params.id);
+
+    if (error) throw error;
+    return res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao remover ponto turístico.' });
+  }
+});
+
+app.get('/api/pontos/:id/avaliacoes', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('avaliacoes')
+      .select('nota')
+      .eq('ponto_id', req.params.id);
+
+    if (error) throw error;
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao buscar avaliações.' });
+  }
+});
+
+app.post('/api/pontos/:id/avaliacoes', async (req, res) => {
+  try {
+    const { usuarioId, nota } = req.body;
+    if (!usuarioId || !Number.isInteger(nota) || nota < 1 || nota > 5) {
+      return res.status(400).json({ message: 'Usuário e nota entre 1 e 5 são obrigatórios.' });
+    }
+
+    const { data, error } = await supabase
+      .from('avaliacoes')
+      .insert({ usuario_id: usuarioId, ponto_id: req.params.id, nota })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao registrar avaliação.' });
   }
 });
 
