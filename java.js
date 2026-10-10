@@ -2,14 +2,17 @@
 const loginForm = document.getElementById('loginForm');
 const cadastroForm = document.getElementById('cadastroForm');
 const recuperarForm = document.getElementById('recuperarForm');
+const redefinirForm = document.getElementById('redefinirForm');
 
 const linkCriarConta = document.getElementById('linkCriarConta');
 const linkRecuperarSenha = document.getElementById('linkRecuperarSenha');
 const closeCadastro = document.getElementById('closeCadastro');
 const closeRecuperar = document.getElementById('closeRecuperar');
+const closeRedefinir = document.getElementById('closeRedefinir');
 
 const modalCadastro = document.getElementById('modalCadastro');
 const modalRecuperar = document.getElementById('modalRecuperar');
+const modalRedefinir = document.getElementById('modalRedefinir');
 const mensagem = document.getElementById('mensagem');
 const btnAdmin = document.getElementById('btnAdmin');
 const adminForm = document.getElementById('adminForm');
@@ -293,9 +296,44 @@ recuperarForm.addEventListener('submit', async function(e) {
     }, 2000);
 });
 
+redefinirForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const token = document.getElementById('tokenRedefinicao').value;
+    const novaSenha = document.getElementById('novaSenha').value;
+    const confirmarNovaSenha = document.getElementById('confirmarNovaSenha').value;
+
+    if (novaSenha.length < 6) {
+        mostrarMensagem('A senha deve ter no mínimo 6 caracteres.', 'erro');
+        return;
+    }
+
+    if (novaSenha !== confirmarNovaSenha) {
+        mostrarMensagem('As senhas não conferem.', 'erro');
+        return;
+    }
+
+    try {
+        const resposta = await apiRequest('/reset-password', {
+            method: 'POST',
+            body: JSON.stringify({ token, novaSenha })
+        });
+        fecharModal(modalRedefinir);
+        redefinirForm.reset();
+        mostrarMensagem(resposta.message, 'sucesso');
+    } catch (error) {
+        mostrarMensagem(error.message, 'erro');
+    }
+});
+
 closeRecuperar.addEventListener('click', function() {
     fecharModal(modalRecuperar);
     recuperarForm.reset();
+});
+
+closeRedefinir.addEventListener('click', function() {
+    fecharModal(modalRedefinir);
+    redefinirForm.reset();
 });
 
 btnAdmin.addEventListener('click', function() {
@@ -558,12 +596,23 @@ window.addEventListener('click', function(e) {
     if (e.target === modalRecuperar) {
         fecharModal(modalRecuperar);
     }
+    if (e.target === modalRedefinir) {
+        fecharModal(modalRedefinir);
+        redefinirForm.reset();
+    }
     if (e.target === modalAdmin) {
         fecharModal(modalAdmin);
     }
 });
 
 window.addEventListener('load', async function() {
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (token) {
+        document.getElementById('tokenRedefinicao').value = token;
+        abrirModal(modalRedefinir);
+        window.history.replaceState(null, '', window.location.pathname);
+    }
+
     const usuarios = localStorage.getItem('usuarios');
     if (!usuarios) {
         await criarUsuariosPadrao();

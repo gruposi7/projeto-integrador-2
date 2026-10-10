@@ -7,6 +7,11 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const APP_BASE_URL = process.env.APP_BASE_URL;
+const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY;
+const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY;
 
 app.use(cors());
 app.use(express.json());
@@ -41,6 +46,31 @@ function hashSenha(senha) {
 
 function normalizarEmail(email) {
   return String(email || '').trim().toLowerCase();
+}
+
+async function enviarEmailRecuperacao(email, token) {
+  const linkRecuperacao = new URL('/', APP_BASE_URL);
+  linkRecuperacao.searchParams.set('token', token);
+
+  const resposta = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      service_id: EMAILJS_SERVICE_ID,
+      template_id: EMAILJS_TEMPLATE_ID,
+      user_id: EMAILJS_PUBLIC_KEY,
+      accessToken: EMAILJS_PRIVATE_KEY,
+      template_params: {
+        to_email: email,
+        reset_link: linkRecuperacao.href,
+      },
+    }),
+  });
+
+  if (!resposta.ok) {
+    const detalhe = await resposta.text();
+    throw new Error(`EmailJS respondeu com HTTP ${resposta.status}: ${detalhe}`);
+  }
 }
 
 app.get('/api/health', (req, res) => {
@@ -173,62 +203,69 @@ app.post('/api/forgot-password', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email obrigatório.' });
     }
 
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY || !EMAILJS_PRIVATE_KEY || !APP_BASE_URL) {
+      return res.status(503).json({
+        success: false,
+        message: 'O envio de email não está configurado no servidor.',
+      });
+    }
+
     const emailNormalizado = normalizarEmail(email);
 
-    const { data: usuario } = await supabase
+    const { data: usuario, error: erroUsuario } = await supabase
       .from('usuarios')
-      .select('*')
+      .select('idusuarios, email')
       .eq('email', emailNormalizado)
       .maybeSingle();
 
-    if (usuario) {
-      const token = crypto.randomBytes(32).toString('hex');
-      const expiraEm = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    if (erroUsuario) throw erroUsuario;
 
-      await supabase
-        .from('usuarios')
-        .update({
-          token_recuperacao: token,
-          token_expira_em: expiraEm,
-        })
-        .eq('idusuarios', usuario.idusuarios);
+    let conta = usuario;
+    let tabela = 'usuarios';
+    let colunaId = 'idusuarios';
 
-      return res.json({
-        success: true,
-        message: 'Token de recuperação gerado com sucesso.',
-        token,
-      });
-    }
-
-    const { data: admin } = await supabase
-      .from('administradores')
-      .select('*')
-      .eq('email', emailNormalizado)
-      .maybeSingle();
-
-    if (admin) {
-      const token = crypto.randomBytes(32).toString('hex');
-      const expiraEm = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-
-      await supabase
+    if (!conta) {
+      const { data: admin, error: erroAdmin } = await supabase
         .from('administradores')
-        .update({
-          token_recuperacao: token,
-          token_expira_em: expiraEm,
-        })
-        .eq('idadmin', admin.idadmin);
+        .select('idadmin, email')
+        .eq('email', emailNormalizado)
+        .maybeSingle();
 
-      return res.json({
-        success: true,
-        message: 'Token de recuperação gerado com sucesso.',
-        token,
-      });
+      if (erroAdmin) throw erroAdmin;
+      conta = admin;
+      tabela = 'administradores';
+      colunaId = 'idadmin';
     }
 
-    return res.status(404).json({ success: false, message: 'Email não encontrado.' });
+    if (conta) {
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiraEm = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+      const { error: erroToken } = await supabase
+        .from(tabela)
+        .update({ token_recuperacao: token, token_expira_em: expiraEm })
+        .eq(colunaId, conta[colunaId]);
+
+      if (erroToken) throw erroToken;
+
+      try {
+        await enviarEmailRecuperacao(conta.email, token);
+      } catch (erroEmail) {
+        await supabase
+          .from(tabela)
+          .update({ token_recuperacao: null, token_expira_em: null })
+          .eq(colunaId, conta[colunaId])
+          .eq('token_recuperacao', token);
+        throw erroEmail;
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: 'Se o email estiver cadastrado, enviaremos um link de recuperação.',
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Erro ao gerar token de recuperação.' });
+    return res.status(503).json({ success: false, message: 'Não foi possível enviar o email de recuperação.' });
   }
 });
 
